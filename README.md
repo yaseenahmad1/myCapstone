@@ -294,7 +294,7 @@ Returns all the journalGalleries of current user.
 
     ```json
     {
-      "myJournalGalleries": [
+      "galleries": [
         {
           "id": 1,
           "userId": 1,
@@ -535,7 +535,7 @@ Returns all the journal entries of a journalGallery.
 
     ```json
     {
-      "gallery_id": 1,
+      "galleryId": 1,
       "userId": 1, 
       "journals" : [
          {
@@ -586,11 +586,11 @@ Returns all the journal entries ever made by the logged in user.
     ```json
     {
     
-         "myReflectionJournals" : [
+         "journals" : [
                {
                    "id": 1,
                    "userId" : 1,
-                   "gallery_id": 1, # do we need the gallery id associated with the journal entry? (perhaps if i want to click on that tile and it takes me to the full gallery page)                                                           
+                   "galleryId": 1, # do we need the gallery id associated with the journal entry? (perhaps if i want to click on that tile and it takes me to the full gallery page)                                                           
                    "image" : "image url", 
                    "title": "The Moon",
                    "surah_number": 17,
@@ -605,7 +605,7 @@ Returns all the journal entries ever made by the logged in user.
                {
                    "id": 2,
                    "userId": 2,
-                   "gallery_id": 1,                         
+                   "galleryId": 1,                         
                    "image" : "image url",
                    "title": "The Sun",
                    "surah_number": 7,
@@ -653,7 +653,7 @@ Creates and returns a new journal.
         {
           "id": 3,               # new id number generated upon creation 
           "userId": 1,
-          "gallery_id": 1, 
+          "galleryId": 1, 
           "image" : "image url",
           "title": "Adam",
           "surah_number": 2,
@@ -722,7 +722,7 @@ Updates and returns an existing journal.
     {
           "id": 3,                         # same id number 
           "userId": 1,
-          "gallery_id": 1, 
+          "galleryId": 1, 
           "image" : "image url",
           "title": "The Creation of Man",     # changed field 
           "surah_number": 2,
@@ -814,7 +814,7 @@ Returns all the comments of the current Gallery. (Lazy or Eager Loading) (Possib
 * Require Authentication: true
 * Request
   * Method: GET 
-  * Route path: /api/galleries/:galleryId/comments           # we will place this path in our galleries file where that is the place to retrieve comments attached to a particular gallery 
+  * Route path: /api/galleries/:galleryId/comments?page=1&limit=10          # we will place this path in our galleries file where that is the place to retrieve comments attached to a particular gallery - adding query params for pagination if                                                                                       comments exceed 10 
   * Body: none
 
 * Successful Response
@@ -829,35 +829,25 @@ Returns all the comments of the current Gallery. (Lazy or Eager Loading) (Possib
         {
           "id": 1,
           "userId": 1,
-          "gallery_id": 1,
+          "galleryId": 1,
           "comment": "Hey! I'm so glad you made an account!",
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "User":
-        {
-            "id": 1,
-            "userName": "yaya30"
+             {
+                 "id": 1,
+                 "userName": "yaya30"
+             },
         },
-          "myJournalGallery":
         {
-          "id": 1,
-          "userId": 1,
-          "image" : "image url", 
-          "title": "Celestial Objects",
-          "surah_number": 17,
-          "verse_number": 12,
-          "arabic_text": "arabic text",           
-          "english_text": "english translation",
-          "description": "body text",
-          "createdAt": "2025-7-19 20:39:36",
-          "updatedAt": "2025-7-19 20:39:36",
-          "numOfJournalEntries": 3, 
-          "numOfLikes": 14,
-          "numOfComments": 10
+          // more comments 
         }
-        }
-      ]
+      ],
+     "page": 1,
+     "totalPages": 5
     }
+
+    
     ```
 
 ### Create a Comment for a `Gallery` based on the `galleryId`
@@ -888,7 +878,7 @@ Create and return a new comment for a gallery specified by its id.
     {
       "id": 1,
       "userId": 1,
-      "gallery_id": 1,
+      "galleryId": 1,
       "comment": "Cool post!",
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36"
@@ -911,7 +901,7 @@ Create and return a new comment for a gallery specified by its id.
     }
     ```
 
-* Error response: Couldn't find a Post with the specified id
+* Error response: Couldn't find a Gallery with the specified id
   * Status Code: 404
   * Headers:
     * Content-Type: application/json
@@ -919,7 +909,7 @@ Create and return a new comment for a gallery specified by its id.
 
     ```json
     {
-      "message": "Post couldn't be found"
+      "message": "Gallery couldn't be found"
     }
     ```
 
@@ -931,7 +921,7 @@ Update and return an existing comment.
 * Require proper authorization: Comment must belong to the current user
 * Request
   * Method: PUT
-  * Route path: api/comments/:commentId           # now that our comment exists this code will be handled in comments.py file 
+  * Route path: /api/comments/:commentId           # now that our comment exists this code will be handled in comments.py file 
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -1018,18 +1008,17 @@ Return all the likes [`and the usernames associated with those likes`] that the 
 
     ```json
     {
-    "myJournalGallery": 
+    "gallery": 
         {
             "galleryId": 1,
-            "userId": 1,
             "numOfLikes": 3, // Response would show a total number of likes that a post has that increments and decrements w/o hard refresh
-            {
-                {   // Upon clicking on "Likes" for a post a drop down or modal of userNames appears to the logged in user
-                    "userName": "JSmith30",
-                    "userName": "PokemonMaster21",
-                    "userName": "Demo-lition"
-                }
-            }
+            "likedByCurrentUser": true, 
+            "likedUsers": [
+                    // Upon clicking on "Likes" for a post a drop down or modal of userNames appears to the logged in user
+                    { "id":1, "userName": "JSmith30"},
+                    { "id":2, "userName": "PokemonMaster21"},
+                    { "id":3, "userName": "Demo-lition"}
+            ]
         },
     }
     ```
@@ -1045,13 +1034,8 @@ Add a like to a gallery based on the galleryId.
   * Route path: api/galleries/:galleryId/likes          # this will add a like to a specific gallery 
   * Headers:
     * Content-Type: application/json
-  * Body:
+  * Body: None 
 
-    ```json
-    {
-      "like" : true // how would I go about building a backend like feature for a post in my request body
-    }
-    ```
 
 * Successful Response
   * Status Code: 201
@@ -1064,7 +1048,6 @@ Add a like to a gallery based on the galleryId.
       "likeId": 1, // will a like have a "likeId" column? 
       "galleryId": 1,
       "userId": 2,
-      "liked" : // a post method would add a "like" , a delete method would remove the "like"
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36"
     }
@@ -1089,13 +1072,7 @@ Remove a like to a post based on the postId.
   * Route path: /api/galleries/:galleryId/likes           # I chose to keep this in the same file because the other two require it and I feel like it is simpler to have all likes route in one place rather than one outside of the other two
   * Headers:
     * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      // since this would be a delete method, there would be a removal of the like on a 'gallery' 
-    }
-    ```
+  * Body: None
 
 * Successful Response
   * Status Code: 201
@@ -1105,11 +1082,10 @@ Remove a like to a post based on the postId.
 
     ```json
     {
-      "id": 1, // will a like have a "likeId" column? 
-      "postId": 1,
+      "likeId": 1, // will a like have a "likeId" column? 
+      "galleryId": 1,
       "userId": 2,
-      "createdAt": "2021-11-19 20:39:36",
-      "updatedAt": "2021-11-19 20:39:36"
+      "deletedAt": "2021-11-19 20:39:36"
     }
 
 ## FOLLOWS          
@@ -1132,16 +1108,14 @@ Return a list of the users that the current user follows.
 
     ```json
     {
-    "userId": 1, 
-        {
-            "Following": 
-                {   // Upon clicking on "Following" for a signed in user, a drop down or modal of userNames appears to the logged in user to view who they follow
-                    "userName": "JSmith30",
-                    "userName": "PokemonMaster21",
-                    "userName": "Demo-lition"
-                }
-        },
-    }
+         "userId": 1,
+         "following": [
+              { "id": 2, "userName": "JSmith30" },
+              { "id": 3, "userName": "PokemonMaster21" },
+              { "id": 4, "userName": "Demo-lition" }
+            ]
+     }
+
     ```
 ### View/Get all of the Current User's `FOLLOWERS LIST`
 
@@ -1160,17 +1134,14 @@ Return a list of the users that follow the current user.
   * Body:
 
     ```json
-    {
-    "userId": 1, 
-        {
-            "Followers": 
-                {   // Upon clicking on "Following" for a signed in user, a drop down or modal of userNames appears to the logged in user to view who they follow
-                    "userName": "JSmith30",
-                    "userName": "PokemonMaster21",
-                    "userName": "Demo-lition"
-                }
-        },
-    }
+         {
+           "userId": 1,
+           "followers": [
+              { "id": 5, "userName": "User5" },
+              { "id": 6, "userName": "User6" }
+            ]
+         }
+
     ```
 
 ### Add a `FOLLOW` to a `USER` based on the `userId` 
@@ -1184,13 +1155,7 @@ Add a "follow" to a user's profile based on a `user's Id`.
   * Route path: /api/users/:userid/follow               # this will also exist in our users.py file 
   * Headers:
     * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "follow" : true // how would I go about building a backend like feature for a post in my request body
-    }
-    ```
+  * Body: None
 
 * Successful Response
   * Status Code: 201
@@ -1199,14 +1164,14 @@ Add a "follow" to a user's profile based on a `user's Id`.
   * Body:
 
     ```json
-    {
-      "followId": 1, // same as likeId (will have to visit DB SCHEMA for association) a user can follow many users (how do we create an association within a table?)
-      "postId": 1,
-      "userId": 2,
-      "liked" : // a post method would add a "like" , a delete method would remove the "like"
-      "createdAt": "2021-11-19 20:39:36",
-      "updatedAt": "2021-11-19 20:39:36"
-    }
+          {
+            "followId": 1,
+            "followerId": 3,     // current user (who is doing the following)
+            "followingId": 1,    // the target user being followed
+            "createdAt": "2025-08-06T16:00:00Z",
+            "updatedAt": "2025-08-06T16:00:00Z"
+          }
+
     ```
 * will we build the like table to have a likeId column that has true and false or 1 and 0 so if a post is liked that will assign a likeId which will connect a user and a like together?
 
@@ -1230,13 +1195,7 @@ Remove a follow from following list based on the userId.
   * Route path: /api/users/:userId/unfollow               # we tap into the user we intend to unfollow? 
   * Headers:
     * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      // frontend behavior would remove follower from list
-    }
-    ```
+  * Body: None
 
 * Successful Response
   * Status Code: 201
@@ -1245,10 +1204,10 @@ Remove a follow from following list based on the userId.
   * Body:
 
     ```json
-    {
-      "id": 1, // this may be frontend behavior
-      "postId": 1,
-      "userId": 2,
-      "createdAt": "2021-11-19 20:39:36",
-      "updatedAt": "2021-11-19 20:39:36"
-    }
+          {
+            "unfollowed": true,
+            "followerId": 3,
+            "unfollowedUserId": 1,
+            "deletedAt": "2025-08-06T16:00:00Z"
+          }
+
