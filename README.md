@@ -97,10 +97,10 @@ correct role(s) or permission(s).
 
 Returns the information about the current user that is logged in.
 
-* Require Authentication: false
+* Require Authentication: true
 * Request
   * Method: GET
-  * Route path: ?
+  * Route path: /api/users/:userId
   * Body: none
 
 * Successful Response when there is a logged in user
@@ -140,8 +140,8 @@ information.
 
 * Require Authentication: false
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: POST
+  * Route path: api/users/:userId
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -206,8 +206,8 @@ user's information.
 
 * Require Authentication: false
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: POST
+  * Route path: /api/session
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -274,16 +274,16 @@ user's information.
     }
     ```
 
-## POSTS
+## myJournalGallery
 
-### Get all Posts
+### Get all the galleries owned by current user 
 
-Returns all the posts.
+Returns all the journalGalleries of current user.
 
-* Require Authentication: false
+* Require Authentication: true 
 * Request
   * Method: GET
-  * Route path: /
+  * Route path: /api/galleries/current
   * Body: none
 
 * Successful Response
@@ -294,106 +294,61 @@ Returns all the posts.
 
     ```json
     {
-      "Posts": [
+      "myJournalGalleries": [
         {
           "id": 1,
           "userId": 1,
-          "title": "Hello", 
-          "post": "This is my first post. Hello World.",
-          "imagePost": "image url",
+          "image" : "image url", 
+          "title": "Celestial Objects",
+          "surah_number": 17,
+          "verse_number": 12,
+          "arabic_text": "arabic text",           
+          "english_text": "english translation",
+          "description": "body text",
           "createdAt": "2025-7-19 20:39:36",
           "updatedAt": "2025-7-19 20:39:36",
+          "numOfJournalEntries": 3, 
           "numOfLikes": 14,
-          "numOfComments": 20
+          "numOfComments": 10
         },
         {
           "id": 2,
           "userId": 1,
-          "title": "World", 
-          "post": "This is my second post. Hola World.",
-          "imagePost": "image url",
+          "image" : "image url", 
+          "title": "Winds",
+          "surah_number": 7,
+          "verse_number": 57,
+          "arabic_text": "arabic text",           
+          "english_text": " english translation",
           "createdAt": "2025-7-19 20:39:36",
           "updatedAt": "2025-7-19 20:39:36",
+          "numOfJournalEntries": 5, 
           "numOfLikes": 10,
-          "numOfComments": 0
-        },
-        {
-          "id": 3,
-          "userId": 2,
-          "title": "Yay", 
-          "post": "I'm the second user. Awesome!",
-          "imagePost": "image url",
-          "createdAt": "2025-7-19 20:39:36",
-          "updatedAt": "2025-7-19 20:39:36",
-          "numOfLikes": 1,
           "numOfComments": 2
-        }
+        },
       ]
     }
     ```
 
-### Get all Posts owned by the Current User
+### Create a `Gallery`
 
-Returns all the posts owned (created) by the current user.
-
-* Require Authentication: true
-* Request
-  * Method: GET
-  * Route path: /username
-  * Body: none
-
-* Successful Response
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "Posts": [
-        {
-          "id": 1,
-          "userId": 1,
-          "title": "My First Post", 
-          "post": "This is my first post. Hello World.",
-          "imagePost": "image url",
-          "createdAt": "2025-7-19 20:39:36",
-          "updatedAt": "2025-7-19 20:39:36",
-          "numOfLikes": 14,
-          "numOfComments": 20
-        }, 
-        {
-          "id": 2,
-          "userId": 1,
-          "title": "Second Post",
-          "post": "This is my second post. Hola World.",
-          "imagePost": "image url",
-          "createdAt": "2025-7-19 20:39:36",
-          "updatedAt": "2025-7-19 20:39:36",
-          "numOfLikes": 10,
-          "numOfComments": 0
-        }
-      ]
-    }
-    ```
-
-### Create a `Post`
-
-Creates and returns a new post.
+Creates and returns a new gallery.
 
 * Require Authentication: true
 * Request
   * Method: POST
-  * Route path: /username/create
+  * Route path: /api/galleries/create
   * Headers:
     * Content-Type: application/json
   * Body:
 
     ```json
     {
-     "title": "My First Post.", 
-     "post": "Creating my first post.",
-     "imagePost": "image url"  
+    "image" : "image url", 
+    "title": "Opening",
+    "surah_number": 1,
+    "verse_number": 1,
+    "description": "body text",
     }
     ```
 
@@ -405,14 +360,21 @@ Creates and returns a new post.
 
     ```json
         {
-          "id": 4,
-          "userId": 3,
-          "title": "Hello World.", 
-          "post": "This is my first post. Hello World.",
-          "imagePost": "image url",
+          "id": 3,
+          "userId": 1,
+          "image" : "image url", 
+          "title": "Opening",
+          "surah_number": 1,
+          "verse_number": 1,
+          "arabic_text": "arabic text",           
+          "english_text": "english translation",
+          "description": "body text",
           "createdAt": "2025-7-19 20:39:36",
           "updatedAt": "2025-7-19 20:39:36",
-        }, 
+          "numOfJournalEntries": 0, 
+          "numOfLikes": 0,
+          "numOfComments": 0 
+        } 
     ```
 
 * Error Response: Body validation errors
@@ -425,32 +387,38 @@ Creates and returns a new post.
     {
       "message": "Bad Request", 
       "errors": 
-      {
-        "title": "Title is required.", 
-        "post": "Post must be longer than 1 character.", 
-        "imagePost": "Image must be a jpeg, pdf, or url",
+      { 
+        "image": "Image must be a jpeg, pdf, or url",
+        "title": "Title is required.",
+        "surah_number": optional,
+        "verse_number": optional,
+        "arabic_text": "arabic text", optional          
+        "english_text": "english translation", optional
+        "description": "Description is required",
       }
     }
     ```
 
-### Edit a `Post`/Add an Image to a `Post`
+### Edit a `Gallery`/Add an Image to a `Gallery`
 
-Updates and returns an existing post.
+Updates and returns an existing gallery.
 
 * Require Authentication: true
-* Require proper authorization: Post must belong to the current user
+* Require proper authorization: Gallery must belong to the current user
 * Request
   * Method: PUT
-  * Route path: /username/postId
+  * Route path: /api/galleries/:galleryId
   * Headers:
     * Content-Type: application/json
   * Body:
 
     ```json
     {
-      "title": "Coolest title.", 
-      "post": "Coolest post.", 
-      "imagePost": null,
+    "image" : "image url", 
+    "title": "Opening",
+    "surah_number": 1,
+    "verse_number": 4,                      # edit made 
+    "description": "new body text",         # edit made 
     }
     ```
 
@@ -462,14 +430,21 @@ Updates and returns an existing post.
 
     ```json
     {
-      "id": 1,
-      "userId": 1,
-      "title": "Coolest title.", 
-      "post": "Coolest post.", 
-      "imagePost": "image url",
-      "createdAt": "2021-11-19 20:39:36",
-      "updatedAt": "2021-11-20 10:06:40"
-    }
+          "id": 3,
+          "userId": 1,
+          "image" : "image url", 
+          "title": "Opening",
+          "surah_number": 1,
+          "verse_number": 4,                # change reflected
+          "arabic_text": "arabic text",           # change reflected
+          "english_text": "english translation",  # change reflected
+          "description": "new body text",         # change reflected 
+          "createdAt": "2025-7-19 20:39:36",
+          "updatedAt": "2025-7-19 20:39:36",
+          "numOfJournalEntries": 0, 
+          "numOfLikes": 0,
+          "numOfComments": 0 
+        } 
     ```
 
 * Error Response: Body validation errors
@@ -483,14 +458,18 @@ Updates and returns an existing post.
       "message": "Oops! Something went wrong", 
       "errors": 
       {
-        "title": "Title is required",
-        "post": "Post must be longer than 1 character",
-        "imagePost": "Must be a valid image",
+        "image": "Image must be a jpeg, pdf, or url",
+        "title": "Title is required.",
+        "surah_number": optional,
+        "verse_number": optional,
+        "arabic_text": "arabic text", optional          
+        "english_text": "english translation", optional
+        "description": "Description is required",
       }
     }
     ```
 
-* Error response: Couldn't find a Post with the specified id
+* Error response: Couldn't find a Gallery with the specified id
   * Status Code: 404
   * Headers:
     * Content-Type: application/json
@@ -498,19 +477,19 @@ Updates and returns an existing post.
 
     ```json
     {
-      "message": "This post most probably does not exist"
+      "message": "This gallery most probably does not exist"
     }
     ```
 
-### Delete a `Post`
+### Delete a `Gallery`
 
-Deletes an existing post.
+Deletes an existing gallery.
 
 * Require Authentication: true
-* Require proper authorization: Post must belong to the current user
+* Require proper authorization: Gallery must belong to the current user
 * Request
   * Method: DELETE
-  * Route path: /username/postId
+  * Route path: /api/galleries/:galleryId
   * Body: none
 
 * Successful Response
@@ -521,7 +500,296 @@ Deletes an existing post.
 
     ```json
     {
-      "message": "Your post was successfully deleted"
+      "message": "Your gallery and associated journal entries have been successfully deleted"
+    }
+    ```
+
+* Error response: Couldn't find a gallery with the specified id
+  * Status Code: 404
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "message": "Hmmm... that gallery couldn't be found"
+    }
+    ```
+## myReflectionJournal
+
+### Get all the journals of a gallery
+
+Returns all the journal entries of a journalGallery. 
+
+* Require Authentication: true 
+* Request
+  * Method: GET
+  * Route path: /api/galleries/:galleryId/journals
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "gallery_id": 1,
+      "userId": 1, 
+      "journals" : [
+         {
+              "id": 1,                                                              
+              "image" : "image url", 
+              "title": "The Moon",
+              "surah_number": 17,
+              "verse_number": 12,
+              "arabic_text": "arabic text",           
+              "english_text": "english translation",
+              "journal_entry": "body text",
+              "createdAt": "2025-7-19 20:39:36",
+              "updatedAt": "2025-7-19 20:39:36", 
+              "numOfLikes": 14,
+         },
+         {
+              "id": 2,                            
+              "image" : "image url", 
+              "title": "The Sun",
+              "surah_number": 7,
+              "verse_number": 57,
+              "arabic_text": "arabic text",           
+              "english_text": " english translation",
+              "createdAt": "2025-7-19 20:39:36",
+              "updatedAt": "2025-7-19 20:39:36",
+              "numOfLikes": 10,
+          },
+         ]
+    }
+    ```
+
+### Get all the journals of the current user 
+
+Returns all the journal entries ever made by the logged in user. 
+
+* Require Authentication: true 
+* Request
+  * Method: GET
+  * Route path: /api/journals  # fetches all existing journal entries so this will be in our journals.py route file 
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+    
+         "myReflectionJournals" : [
+               {
+                   "id": 1,
+                   "userId" : 1,
+                   "gallery_id": 1, # do we need the gallery id associated with the journal entry? (perhaps if i want to click on that tile and it takes me to the full gallery page)                                                           
+                   "image" : "image url", 
+                   "title": "The Moon",
+                   "surah_number": 17,
+                   "verse_number": 12,
+                   "arabic_text": "arabic text",           
+                   "english_text": "english translation",
+                   "journal_entry": "body text",
+                   "createdAt": "2025-7-19 20:39:36",
+                   "updatedAt": "2025-7-19 20:39:36", 
+                   "numOfLikes": 14,
+               },
+               {
+                   "id": 2,
+                   "userId": 2,
+                   "gallery_id": 1,                         
+                   "image" : "image url",
+                   "title": "The Sun",
+                   "surah_number": 7,
+                   "verse_number": 57,
+                   "arabic_text": "arabic text",           
+                   "english_text": "english translation",
+                   "journal_entry": "body text", 
+                   "createdAt": "2025-7-19 20:39:36",
+                   "updatedAt": "2025-7-19 20:39:36",
+                   "numOfLikes": 10,
+               },
+         ]
+    }
+    ```
+    
+### Create a `Journal`
+
+Creates and returns a new journal.
+
+* Require Authentication: true
+* Request
+  * Method: POST
+  * Route path: /api/galleries/:galleryId/journals     # this route will be in our galleries.py route file because the only way to write a journal entry is within an existing gallery
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+    "image" : "image url",
+    "title": "Adam",
+    "surah_number": 2,
+    "verse_number": 1,
+    "journal_entry": "body text",
+    }
+    ```
+
+* Successful Response
+  * Status Code: 201
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+        {
+          "id": 3,               # new id number generated upon creation 
+          "userId": 1,
+          "gallery_id": 1, 
+          "image" : "image url",
+          "title": "Adam",
+          "surah_number": 2,
+          "verse_number": 1,
+          "arabic_text": "arabic text",           
+          "english_text": "english translation",
+          "journal_entry": "body text",
+          "createdAt": "2025-7-19 20:39:36",
+          "updatedAt": "2025-7-19 20:39:36",
+          "numOfLikes": 0,
+        } 
+    ```
+
+* Error Response: Body validation errors
+  * Status Code: 400
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "message": "Bad Request", 
+      "errors": 
+      { 
+        "image": "Image must be a jpeg, pdf, or url",
+        "title": allowNull,
+        "surah_number": surah number is required,
+        "verse_number": surah number is required,
+        "arabic_text": "arabic text",           
+        "english_text": "english translation", 
+        "journal_entry": "This field cannot be empty",
+      }
+    }
+    ```
+
+### Edit a `Journal`
+
+Updates and returns an existing journal.
+
+* Require Authentication: true
+* Require proper authorization: Journal must belong to the current user
+* Request
+  * Method: PUT
+  * Route path: /api/journals/:journalId    # now that our journal id exists, this route will be coded in our journals.py file 
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+    "image" : "image url",
+    "title": "The Creation of Man",           # edit made here
+    "surah_number": 2,
+    "verse_number": 10,                       # edit made here
+    "journal_entry": "body text",
+    }
+    ```
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+          "id": 3,                         # same id number 
+          "userId": 1,
+          "gallery_id": 1, 
+          "image" : "image url",
+          "title": "The Creation of Man",     # changed field 
+          "surah_number": 2,
+          "verse_number": 10,                 # changed field 
+          "arabic_text": "arabic text",       # changed verse 
+          "english_text": "english translation", # changed verse 
+          "journal_entry": "body text",
+          "createdAt": "2025-7-19 20:39:36",
+          "updatedAt": "2025-7-19 20:39:36",
+          "numOfLikes": 0,
+        } 
+    ```
+
+* Error Response: Body validation errors
+  * Status Code: 400
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "message": "Oops! Something went wrong", 
+      "errors": 
+      {
+        "image": "Image must be a jpeg, pdf, or url",
+        "title": "Title is required.",
+        "surah_number": "this field is required",
+        "verse_number": "this field is required",
+        "arabic_text": "arabic text", required          
+        "english_text": "english translation", required
+        "description": "Description is required",
+      }
+    }
+    ```
+
+* Error response: Couldn't find a journal with the specified id
+  * Status Code: 404
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "message": "This journal most probably does not exist"
+    }
+    ```
+
+### Delete a `Journal`
+
+Deletes an existing journal.
+
+* Require Authentication: true
+* Require proper authorization: Journal must belong to the current user
+* Request
+  * Method: DELETE
+  * Route path: /api/journals/:journalId      # same route as edit but our method is DELETE now so this will occur in our journals.py file 
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "message": "Your journal has been successfully deleted"
     }
     ```
 
@@ -533,20 +801,20 @@ Deletes an existing post.
 
     ```json
     {
-      "message": "Hmmm... that post couldn't be found"
+      "message": "Hmmm... that journal couldn't be found"
     }
     ```
 
 ## COMMENTS
 
-### Get all `COMMENTS` of the Current Post by `postId`
+### Get all `COMMENTS` of the Current Gallery by `galleryId`
 
-Returns all the comments of the current post. (Lazy or Eager Loading) (Possible pagination: 10 comments at a time)
+Returns all the comments of the current Gallery. (Lazy or Eager Loading) (Possible pagination: 10 comments at a time)
 
-* Require Authentication: false
+* Require Authentication: true
 * Request
   * Method: GET 
-  * Route path: /postId/comments
+  * Route path: /api/galleries/:galleryId/comments           # we will place this path in our galleries file where that is the place to retrieve comments attached to a particular gallery 
   * Body: none
 
 * Successful Response
@@ -561,40 +829,45 @@ Returns all the comments of the current post. (Lazy or Eager Loading) (Possible 
         {
           "id": 1,
           "userId": 1,
-          "postId": 1,
-          "comment": "Hey! I'm so glad you made a YMTJ account!",
+          "gallery_id": 1,
+          "comment": "Hey! I'm so glad you made an account!",
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "User":
         {
             "id": 1,
-            "userName": "jsmith30"
+            "userName": "yaya30"
         },
-          "Post":
+          "myJournalGallery":
         {
-            "id": 1,
-            "userId": 1,
-            "title": "My First Post", 
-            "post": "This is my first post. Hello World.",
-            "imagePost": "image url",
-            "createdAt": "2025-7-19 20:39:36",
-            "updatedAt": "2025-7-19 20:39:36",
-            "numOfLikes": 14,
-            "numOfComments": 20
+          "id": 1,
+          "userId": 1,
+          "image" : "image url", 
+          "title": "Celestial Objects",
+          "surah_number": 17,
+          "verse_number": 12,
+          "arabic_text": "arabic text",           
+          "english_text": "english translation",
+          "description": "body text",
+          "createdAt": "2025-7-19 20:39:36",
+          "updatedAt": "2025-7-19 20:39:36",
+          "numOfJournalEntries": 3, 
+          "numOfLikes": 14,
+          "numOfComments": 10
         }
         }
       ]
     }
     ```
 
-### Create a Comment for a `Post` based on the `postId`
+### Create a Comment for a `Gallery` based on the `galleryId`
 
-Create and return a new comment for a post specified by id.
+Create and return a new comment for a gallery specified by its id.
 
 * Require Authentication: true
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: POST
+  * Route path: /api/galleries/:galleryId/comments          # since we are creating a new comment, this will be placed in our galleries.py routes file 
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -615,7 +888,7 @@ Create and return a new comment for a post specified by id.
     {
       "id": 1,
       "userId": 1,
-      "postId": 1,
+      "gallery_id": 1,
       "comment": "Cool post!",
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36"
@@ -657,8 +930,8 @@ Update and return an existing comment.
 * Require Authentication: true
 * Require proper authorization: Comment must belong to the current user
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: PUT
+  * Route path: api/comments/:commentId           # now that our comment exists this code will be handled in comments.py file 
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -679,7 +952,7 @@ Update and return an existing comment.
     {
       "id": 1,
       "userId": 1,
-      "postId": 1,
+      "galleryId": 1,
       "comment": "This was an awesome post!",
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-20 10:06:40"
@@ -709,8 +982,8 @@ Delete an existing comment.
 * Require Authentication: true
 * Require proper authorization: Comment must belong to the current user
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: DELETE
+  * Route path: /api/comments/:commentId                # same route different method in comments.py file 
   * Body: none
 
 * Successful Response
@@ -727,14 +1000,14 @@ Delete an existing comment.
 
 ## LIKES
 
-### View/Get all of the Current Post's `LIKES`
+### View/Get all of the Current Gallery `LIKES`
 
 Return all the likes [`and the usernames associated with those likes`] that the current post has.
 
 * Require Authentication: true
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: GET
+  * Route path: api/galleries/:galleryId/likes           # this will be placed in our galleries.py file where we can tap into a specific gallery and extract all users who liked the gallery
   * Body: none
 
 * Successful Response
@@ -745,9 +1018,9 @@ Return all the likes [`and the usernames associated with those likes`] that the 
 
     ```json
     {
-    "Post": 
+    "myJournalGallery": 
         {
-            "postId": 1,
+            "galleryId": 1,
             "userId": 1,
             "numOfLikes": 3, // Response would show a total number of likes that a post has that increments and decrements w/o hard refresh
             {
@@ -761,15 +1034,15 @@ Return all the likes [`and the usernames associated with those likes`] that the 
     }
     ```
 
-### Add a `LIKE` to a `POST` based on the `postId` - `POST` method 
+### Add a `LIKE` to a `Gallery` based on the `galleryId` 
 
-Add a like to a post based on the postId.
+Add a like to a gallery based on the galleryId.
 
 * Require Authentication: true
 * Require proper authorization: n/a (postId must exist)
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: POST 
+  * Route path: api/galleries/:galleryId/likes          # this will add a like to a specific gallery 
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -789,7 +1062,7 @@ Add a like to a post based on the postId.
     ```json
     {
       "likeId": 1, // will a like have a "likeId" column? 
-      "postId": 1,
+      "galleryId": 1,
       "userId": 2,
       "liked" : // a post method would add a "like" , a delete method would remove the "like"
       "createdAt": "2021-11-19 20:39:36",
@@ -805,22 +1078,22 @@ Add a like to a post based on the postId.
   
   `post can only be liked or unliked so no error response for this feature`
 
-### Remove a `LIKE` to a `POST` based on the `postId` - `DELETE` method 
+### Remove a `LIKE` from a `Gallery` based on the `galleryId` 
 
 Remove a like to a post based on the postId.
 
 * Require Authentication: true
 * Require proper authorization: n/a (postId must exist)
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: DELETE
+  * Route path: /api/galleries/:galleryId/likes           # I chose to keep this in the same file because the other two require it and I feel like it is simpler to have all likes route in one place rather than one outside of the other two
   * Headers:
     * Content-Type: application/json
   * Body:
 
     ```json
     {
-      // since this would be a delete method, there would be a removal of the like 'post' 
+      // since this would be a delete method, there would be a removal of the like on a 'gallery' 
     }
     ```
 
@@ -839,16 +1112,16 @@ Remove a like to a post based on the postId.
       "updatedAt": "2021-11-19 20:39:36"
     }
 
-## FOLLOWS
+## FOLLOWS          
 
 ### View/Get all of the Current User's `FOLLOWING LIST`
 
-Return a list of the users that the current user follows. Users CANNOT follow themselves
+Return a list of the users that the current user follows. 
 
 * Require Authentication: true
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: GET
+  * Route path: api/users/:userId/following               # this will be in our users.py where we will be able to see the users that the current user is following 
   * Body: none
 
 * Successful Response
@@ -870,16 +1143,45 @@ Return a list of the users that the current user follows. Users CANNOT follow th
         },
     }
     ```
+### View/Get all of the Current User's `FOLLOWERS LIST`
 
-### Add a `FOLLOW` to a `USER` based on the `userId` - `POST` method?
+Return a list of the users that follow the current user.
+
+* Require Authentication: true
+* Request
+  * Method: GET
+  * Route path: api/users/:userId/followers               # this will be in our users.py where we will be able to see the people who follow the current user 
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+    "userId": 1, 
+        {
+            "Followers": 
+                {   // Upon clicking on "Following" for a signed in user, a drop down or modal of userNames appears to the logged in user to view who they follow
+                    "userName": "JSmith30",
+                    "userName": "PokemonMaster21",
+                    "userName": "Demo-lition"
+                }
+        },
+    }
+    ```
+
+### Add a `FOLLOW` to a `USER` based on the `userId` 
 
 Add a "follow" to a user's profile based on a `user's Id`.
 
 * Require Authentication: true
-* Require proper authorization: n/a (userId must exist)
+* Require proper authorization: current user
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: POST
+  * Route path: /api/users/:userid/follow               # this will also exist in our users.py file 
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -924,8 +1226,8 @@ Remove a follow from following list based on the userId.
 * Require Authentication: true
 * Require proper authorization: userId must exist
 * Request
-  * Method: ?
-  * Route path: ?
+  * Method: DELETE
+  * Route path: /api/users/:userId/unfollow               # we tap into the user we intend to unfollow? 
   * Headers:
     * Content-Type: application/json
   * Body:
