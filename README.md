@@ -166,7 +166,7 @@ class Journal(db.Model, TimeStampMixin):
      # field required
     description = db.Column(db.String(), nullable=False)
      # field required
-    is_private = db.Column(db.Boolean(), nullable=True)
+    is_private = db.Column(db.Boolean(), nullable=False, default=False)
      # Privacy flag for journal
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")))
      # for fetching and cascade delete purposes so if a user is deleted all journal entries connected to that user will be deleted as well 
