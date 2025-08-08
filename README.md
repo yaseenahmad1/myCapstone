@@ -46,6 +46,168 @@ TABLE RELATIONSHIPS
 9. A journalEntry can have many likes
 ```
 
+# USERS 
+
+```python
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(40), nullable=False, unique=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    first_name = db.Column(db.String(40), nullable=False)
+    last_name = db.Column(db.String(40), nullable=False)
+    hashed_password = db.Column(db.String(255), nullable=False)
+
+    # Relationships
+    likes = db.relationship("Like", back_populates="user", cascade="all, delete-orphan")  
+    # → A user can give many likes, deleting user removes their likes
+
+    following = db.relationship("Follow", foreign_keys=[Follow.follower_id], back_populates="follower", cascade="all, delete-orphan")  
+    # → All follow relationships where this user is the one doing the following
+
+    followers = db.relationship("Follow", foreign_keys=[Follow.following_id], back_populates="following", cascade="all, delete-orphan")  
+    # → All follow relationships where this user is being followed
+
+    comments = db.relationship("Comment", back_populates="user", cascade="all, delete-orphan")  
+    # → A user can leave many comments, deleting user removes their comments
+
+    journals = db.relationship("Journal", back_populates="user", cascade="all, delete-orphan")  
+    # → A user can have many journals, deleting user removes their journals
+
+    galleries = db.relationship("Gallery", back_populates="user", cascade="all, delete-orphan")  
+    # → A user can have many galleries, deleting user removes their galleries
+```
+
+# FOLLOWS
+
+```python
+class Follow(db.Model, TimeStampMixin):
+    __tablename__ = "follows"
+
+    if environment == "production":
+        __table_args__ = {"schema": SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False)
+    following_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False)
+
+    # Relationships
+    follower = db.relationship("User", foreign_keys=[follower_id], back_populates="following")  
+    # → The user who is following someone
+
+    following = db.relationship("User", foreign_keys=[following_id], back_populates="followers")  
+    # → The user who is being followed
+```
+
+# GALLERIES 
+
+```python
+class Gallery(db.Model, TimeStampMixin):
+    __tablename__ = 'galleries'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(250), nullable=False)
+    surah = db.Column(db.Integer, nullable=True)
+    verse = db.Column(db.Integer, nullable=True)
+    arabic_text = db.Column(db.String, nullable=True)
+    english_text = db.Column(db.String, nullable=True)
+    description = db.Column(db.String(), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")))
+
+    # Relationships
+    user = db.relationship("User", back_populates="galleries")  
+    # → A gallery belongs to a single user
+
+    journals = db.relationship("Journal", back_populates="gallery", cascade="all, delete-orphan")  
+    # → A gallery can have many journals, deleting gallery removes its journals
+```
+
+# JOURNALS 
+
+```python
+class Journal(db.Model, TimeStampMixin):
+    __tablename__ = 'journals'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(250), nullable=False)
+    surah = db.Column(db.Integer, nullable=False)
+    verse = db.Column(db.Integer, nullable=False)
+    arabic_text = db.Column(db.String, nullable=False)
+    english_text = db.Column(db.String, nullable=False)
+    description = db.Column(db.String(), nullable=False)
+    is_private = db.Column(db.Boolean(), nullable=True)  # Privacy flag for journal
+    user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")))
+    gallery_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("galleries.id")))
+
+    # Relationships
+    user = db.relationship("User", back_populates="journals")  
+    # → A journal belongs to one user
+
+    comments = db.relationship("Comment", back_populates="journal", cascade="all, delete-orphan")  
+    # → A journal can have many comments, deleting journal removes them
+
+    likes = db.relationship("Like", back_populates="journal", cascade="all, delete-orphan")  
+    # → A journal can have many likes, deleting journal removes them
+
+    gallery = db.relationship("Gallery", back_populates="journals")  
+    # → A journal belongs to one gallery
+```
+
+# COMMENTS 
+
+```python
+class Comment(db.Model, TimeStampMixin):
+    __tablename__ = 'comments'
+
+    if environment == 'production':
+        __table_args__ = {'schema': SCHEMA}
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False)
+    journal_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("journals.id")), nullable=False)
+    comment_body = db.Column(db.String(300), nullable=False)
+
+    # Relationships
+    user = db.relationship("User", back_populates="comments")  
+    # → A comment belongs to one user
+
+    journal = db.relationship("Journal", back_populates="comments")  
+    # → A comment belongs to one journal
+```
+
+# LIKES 
+
+```python
+class Like(db.Model):
+    __tablename__ = 'likes'
+
+    if environment == 'production':
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False)
+    journal_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("journals.id")), nullable=False)
+
+    # Relationships
+    user = db.relationship("User", back_populates="likes")  
+    # → A like belongs to one user
+
+    journal = db.relationship("Journal", back_populates="likes")  
+    # → A like belongs to one journal
+```
+
 # Backend API Routes
 
 # `myIslamTree`
