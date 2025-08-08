@@ -64,22 +64,22 @@ class User(db.Model, UserMixin):
 
     # Relationships
     likes = db.relationship("Like", back_populates="user", cascade="all, delete-orphan")  
-    # → A user can give many likes, deleting user removes their likes
+    # A user can give many likes, deleting user removes their likes
 
     following = db.relationship("Follow", foreign_keys=[Follow.follower_id], back_populates="follower", cascade="all, delete-orphan")  
-    # → All follow relationships where this user is the one doing the following
+    # All follow relationships where this user is the one doing the following
 
     followers = db.relationship("Follow", foreign_keys=[Follow.following_id], back_populates="following", cascade="all, delete-orphan")  
-    # → All follow relationships where this user is being followed
+    # All follow relationships where this user is being followed
 
     comments = db.relationship("Comment", back_populates="user", cascade="all, delete-orphan")  
-    # → A user can leave many comments, deleting user removes their comments
+    # A user can leave many comments, deleting user removes their comments
 
     journals = db.relationship("Journal", back_populates="user", cascade="all, delete-orphan")  
-    # → A user can have many journals, deleting user removes their journals
+    # A user can have many journals, deleting user removes their journals
 
     galleries = db.relationship("Gallery", back_populates="user", cascade="all, delete-orphan")  
-    # → A user can have many galleries, deleting user removes their galleries
+    # A user can have many galleries, deleting user removes their galleries
 ```
 
 # FOLLOWS
@@ -97,10 +97,10 @@ class Follow(db.Model, TimeStampMixin):
 
     # Relationships
     follower = db.relationship("User", foreign_keys=[follower_id], back_populates="following")  
-    # → The user who is following someone
+    # The user who is following someone
 
     following = db.relationship("User", foreign_keys=[following_id], back_populates="followers")  
-    # → The user who is being followed
+    # The user who is being followed
 ```
 
 # GALLERIES 
@@ -124,10 +124,10 @@ class Gallery(db.Model, TimeStampMixin):
 
     # Relationships
     user = db.relationship("User", back_populates="galleries")  
-    # → A gallery belongs to a single user
+    # A gallery belongs to a single user
 
     journals = db.relationship("Journal", back_populates="gallery", cascade="all, delete-orphan")  
-    # → A gallery can have many journals, deleting gallery removes its journals
+    # A gallery can have many journals, deleting gallery removes its journals
 ```
 
 # JOURNALS 
@@ -153,16 +153,16 @@ class Journal(db.Model, TimeStampMixin):
 
     # Relationships
     user = db.relationship("User", back_populates="journals")  
-    # → A journal belongs to one user
+    # A journal belongs to one user
 
     comments = db.relationship("Comment", back_populates="journal", cascade="all, delete-orphan")  
-    # → A journal can have many comments, deleting journal removes them
+    # A journal can have many comments, deleting journal removes them
 
     likes = db.relationship("Like", back_populates="journal", cascade="all, delete-orphan")  
-    # → A journal can have many likes, deleting journal removes them
+    # A journal can have many likes, deleting journal removes them
 
     gallery = db.relationship("Gallery", back_populates="journals")  
-    # → A journal belongs to one gallery
+    # A journal belongs to one gallery
 ```
 
 # COMMENTS 
@@ -181,10 +181,10 @@ class Comment(db.Model, TimeStampMixin):
 
     # Relationships
     user = db.relationship("User", back_populates="comments")  
-    # → A comment belongs to one user
+    # A comment belongs to one user
 
     journal = db.relationship("Journal", back_populates="comments")  
-    # → A comment belongs to one journal
+    # A comment belongs to one journal
 ```
 
 # LIKES 
@@ -202,10 +202,10 @@ class Like(db.Model):
 
     # Relationships
     user = db.relationship("User", back_populates="likes")  
-    # → A like belongs to one user
+    # A like belongs to one user
 
     journal = db.relationship("Journal", back_populates="likes")  
-    # → A like belongs to one journal
+    # A like belongs to one journal
 ```
 
 # Backend API Routes
