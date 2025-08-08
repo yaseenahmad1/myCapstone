@@ -57,10 +57,15 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), nullable=False, unique=True)
+     # field required
     email = db.Column(db.String(255), nullable=False, unique=True)
+     # field required
     first_name = db.Column(db.String(40), nullable=False)
+     # field required
     last_name = db.Column(db.String(40), nullable=False)
+     # field required
     hashed_password = db.Column(db.String(255), nullable=False)
+     # field required
 
     # Relationships
     likes = db.relationship("Like", back_populates="user", cascade="all, delete-orphan")  
@@ -114,12 +119,19 @@ class Gallery(db.Model, TimeStampMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(255), nullable=False)
+     # field required
     title = db.Column(db.String(250), nullable=False)
+     # field required
     surah = db.Column(db.Integer, nullable=True)
+     # field not required
     verse = db.Column(db.Integer, nullable=True)
+     # field not required
     arabic_text = db.Column(db.String, nullable=True)
+     # field not required
     english_text = db.Column(db.String, nullable=True)
-    description = db.Column(db.String(), nullable=True)
+     # field not required
+    description = db.Column(db.String(), nullable=False)
+     # field required
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")))
 
     # Relationships
@@ -141,15 +153,26 @@ class Journal(db.Model, TimeStampMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(255), nullable=False)
+     # field required
     title = db.Column(db.String(250), nullable=False)
+     # field required
     surah = db.Column(db.Integer, nullable=False)
+     # field required
     verse = db.Column(db.Integer, nullable=False)
+     # field required
     arabic_text = db.Column(db.String, nullable=False)
+     # field required
     english_text = db.Column(db.String, nullable=False)
+     # field required
     description = db.Column(db.String(), nullable=False)
-    is_private = db.Column(db.Boolean(), nullable=True)  # Privacy flag for journal
+     # field required
+    is_private = db.Column(db.Boolean(), nullable=True)
+     # Privacy flag for journal
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")))
+     # for fetching and cascade delete purposes so if a user is deleted all journal entries connected to that user will be deleted as well 
     gallery_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("galleries.id")))
+     # for fetching and cascade delete purposes so if a gallery is deleted all journal entries connected to that gallery will be deleted as well 
+
 
     # Relationships
     user = db.relationship("User", back_populates="journals")  
@@ -178,6 +201,7 @@ class Comment(db.Model, TimeStampMixin):
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False)
     journal_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("journals.id")), nullable=False)
     comment_body = db.Column(db.String(300), nullable=False)
+     # field required
 
     # Relationships
     user = db.relationship("User", back_populates="comments")  
