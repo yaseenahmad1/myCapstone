@@ -1,5 +1,13 @@
 # myCapstone
 
+DEMONSTRATION 
+5 users 
+1. gold tree
+2. 4/5 gold tree
+3. 3/5 gold  tree
+4. 2/5 gold tree
+5. 0/5 gold tree 
+
 # Features List 
 
 ```js
