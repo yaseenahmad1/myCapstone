@@ -6,7 +6,14 @@ DEMONSTRATION
 2. 4/5 gold tree
 3. 3/5 gold  tree
 4. 2/5 gold tree
-5. 0/5 gold tree 
+5. 0/5 gold tree
+
+# FRONTEND GAME PLAN 
+Sunday - set up my store by creating all the action types, action creators, thunks and reducers that I will need 
+Monday - set up all create form pages (Gallery Form page, Journal Form Page, Comment Form Page) --- if i have time create the Edit form pages for them (same thing just use PUT thunks to auto fill form)
+Tuesday - set up layout for how galleries and journal entries within a gallery will look on a user's profile and Create tree black to gold 10 grid rows connected to total progress of a user,
+Wednesday - Add the screensave welcome page we did and the sprial image for our landing page
+Thursday - 
 
 # Features List 
 
