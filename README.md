@@ -8,6 +8,46 @@ DEMONSTRATION
 4. 2/5 gold tree
 5. 0/5 gold tree
 
+You don’t need to change the reducer for a redirect — the reducer’s job is just to update the Redux state. Right now, your CREATE_GALLERY case already adds the new gallery into currentUserGalleries, so the state is correct and has all the info you need (including its id). ✅
+
+Redirecting to the single gallery page is purely a frontend/React thing. For example, after dispatching the thunkCreateGallery in your component, you can use React Router’s useNavigate to go to the new gallery’s page:
+
+const navigate = useNavigate();
+
+const handleSubmit = async (gallery) => {
+  const newGallery = await dispatch(thunkCreateGallery(gallery));
+  if (newGallery && newGallery.id) {
+    navigate(`/galleries/${newGallery.id}`);
+  }
+};
+
+# your tree progree bar logic : 
+```js
+ const updateTreeProgress = (galleryId, journalId) => {
+     // idea is to create a function that whenever a new gallery or journal is added or if one or the other is deleted we update the tree bar status based on total_progress column of our users object 
+     galleryNumAltered = galleryId
+     // use a dispatch that fetches user information whenever
+
+//Returning data from your thunk allows any component or function that calls the thunk to immediately use the fetched gallery, without waiting for Redux state to update.
+
+//For example:
+
+const handleGalleryClick = async (galleryId) => {
+  const gallery = await dispatch(thunkGetGallery(galleryId));
+  console.log(gallery); // you have the full gallery object right away
+  updateTreeProgress(gallery); // you can use it to update progress bar immediately
+};
+
+
+//Without return data, the component would have to rely on the Redux state after it updates, which can sometimes require extra useEffect hooks.
+
+//Returning it makes your thunks more flexible — you can use them both to update state and get immediate access to data for side effects (like updating a progress tree).
+
+//So yes, for your tree progress bar feature, returning the data from the thunk is actually really useful.
+
+//If you want, I can show a pattern for all your gallery thunks with this “return data” approach, so your frontend logic will be ready for things like the progress tree.
+```
+
 # FRONTEND GAME PLAN 
 
 Sunday - Worked on greeting page, home page, set up thunks and reducers
