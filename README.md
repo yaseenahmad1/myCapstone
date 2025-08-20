@@ -8,6 +8,8 @@ DEMONSTRATION
 4. 2/5 gold tree
 5. 0/5 gold tree
 
+i think i am starting to understand so a component is just building out this big function that does the tasks we want it to do in one page? so for example if i want to delete add edit a comment in one page (gallery details page) then i would have one component doing all crud tasks but for this form we are just executing the creation that requires the building out of the next component first which will utilize the thunkGetGallery that fetches a single gallery and that from the database so once the create dispatch has ran it updates the database and then our thunkGetGallery kicks in from there and brings us to the gallery page where we present that response inside like in postman but now we can css that postman response?
+
 PLAN : Create gallery and journal page fully save comments, likes and follows till end focus on hoempage and these two feature 
 
 You don’t need to change the reducer for a redirect — the reducer’s job is just to update the Redux state. Right now, your CREATE_GALLERY case already adds the new gallery into currentUserGalleries, so the state is correct and has all the info you need (including its id). ✅
