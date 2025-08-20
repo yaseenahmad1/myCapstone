@@ -8,6 +8,8 @@ DEMONSTRATION
 4. 2/5 gold tree
 5. 0/5 gold tree
 
+PLAN : Create gallery and journal page fully save comments, likes and follows till end focus on hoempage and these two feature 
+
 You don’t need to change the reducer for a redirect — the reducer’s job is just to update the Redux state. Right now, your CREATE_GALLERY case already adds the new gallery into currentUserGalleries, so the state is correct and has all the info you need (including its id). ✅
 
 Redirecting to the single gallery page is purely a frontend/React thing. For example, after dispatching the thunkCreateGallery in your component, you can use React Router’s useNavigate to go to the new gallery’s page:
